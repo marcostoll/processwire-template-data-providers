@@ -1,0 +1,184 @@
+<?php
+
+/**
+ * Class definition of ProcessWire module TemplateDataProviders
+ *
+ * See README.md for usage instructions.
+ *
+ * @author Marco Stoll <marco.stoll@neuwaerts.de>
+ * @version 1.0.1
+ * @copyright Copyright (c) 2013, neuwaerts GmbH
+ * @filesource
+ * @see http://www.neuwaerts.de
+ * @see http://www.processwire.com
+ */
+
+/**
+ * Class TemplateDataProviders
+ */
+class TemplateDataProviders extends WireData implements Module, ConfigurableModule {
+
+    /**
+     * @field array Default config values
+     */
+    protected static $defaults = array(
+        'data_providers_path' => 'dataproviders'
+    );
+
+    /**
+     * @field DataProvidersFactory
+     */
+    protected $factory = null;
+
+    /**
+     * @field string
+     */
+    protected $controllersPath = null;
+
+    /**
+     * Generic constructor
+     *
+     * Extracts the data providers path from the module config.
+     */
+    public function __construct() {
+
+        $relativePath = $this->get('data_providers_path');
+        if (empty($relativePath)) $relativePath = self::$defaults['data_providers_path'];
+
+        // add data providers path to wire config
+        wire('config')->paths->dataproviders = realpath(wire('config')->paths->templates .
+                                                        DIRECTORY_SEPARATOR . $relativePath);
+    }
+
+    /**
+     * Retrieve module meta data
+     *
+     * Implementation of the Module interface
+     *
+     * @return array
+     * @see http://processwire.com/apigen/class-Module.html
+     */
+    public static function getModuleInfo() {
+
+        return array(
+
+            // The module'ss title, typically a little more descriptive than the class name
+            'title' => 'Template Data Providers',
+
+            // version: major, minor, revision, i.e. 100 = 1.0.0
+            'version' => 101,
+
+            // summary is brief description of what this module is
+            'summary' => 'Define data providers for templates or chunks to prepare data or process actions',
+
+            // Optional URL to more information about the module
+            'href' => 'http://www.processwire.com',
+
+            // singular=true: indicates that only one instance of the module is allowed.
+            // This is usually what you want for modules that attach hooks.
+            'singular' => true,
+
+            // autoload=true: indicates the module should be started with ProcessWire.
+            // This is necessary for any modules that attach runtime hooks, otherwise those
+            // hooks won't get attached unless some other code calls the module on it's own.
+            // Note that autoload modules are almost always also 'singular' (seen above).
+            'autoload' => true,
+        );
+    }
+
+    /**
+     * Retrieves the list of config input fields
+     *
+     * Implementation of the ConfigurableModule interface
+     *
+     * @param array $data The config data
+     * @return InputfieldWrapper
+     * @see http://processwire.com/apigen/class-ConfigurableModule.html
+     */
+    public static function getModuleConfigInputfields(array $data) {
+
+        $data = array_merge(self::$defaults, $data);
+
+        $fields = new InputfieldWrapper();
+        $modules = wire('modules');
+
+        $field = $modules->get('InputfieldText');
+        $field->label = __('Path to data providers classes (wire(\'config\')->paths->templates)');
+        $field->attr('name', 'data_providers_path');
+        $field->attr('size', 30);
+        $field->attr('value', $data['data_providers_path']);
+
+        $fields->append($field);
+
+        return $fields;
+    }
+
+    /**
+     * Initialize the module
+     *
+     * Implementation of the Module interface
+     *
+     * ProcessWire calls this when the module is loaded. For 'autoload' modules, this will be called
+     * when ProcessWire's API is ready. As a result, this is a good place to attach hooks.
+     *
+     * @see http://processwire.com/apigen/class-Module.html
+     */
+    public function init() {
+
+        // register nw autoloader
+        require_once(wire('config')->paths->TemplateDataProviders . '/nw/Autoloader.php');
+        spl_autoload_register(array('\nw\Autoloader', 'autoload'));
+
+        $this->addHookBefore('Page::render', $this, 'beforePageRender');
+
+        $this->addHook('Page::renderChunk', $this, 'renderChunk');
+    }
+
+    /**
+     * Hook callback for Page::render
+     *
+     * @param HookEvent $event The hook event
+     */
+    public function beforePageRender(HookEvent $event) {
+
+        $page = $event->object;
+
+        // don't mess with admin templates
+        if ($page->template == 'admin') return;
+
+        $dataProvider = \nw\DataProviders\Factory::get($page);
+
+        // return if no data provider defined for given page
+        if (is_null($dataProvider)) return;
+
+        $dataProvider->populate();
+    }
+
+    /**
+     * Hook callback for Page::renderChunk
+     *
+     * This method as added as a hook to each \Page instance.
+     * The first argument passed must be the path to the chunk file render
+     * (relative to wire('config')->paths->templates).
+     *
+     * You may pass an arbitrary amount of additional arguments which will
+     * be passed as contextual data to the chunk data provider.
+     *
+     * @param HookEvent $event
+     * @see \nw\DataProviders\ChunkDataProvider
+     */
+    public function renderChunk(HookEvent $event) {
+
+        static $chunkRenderer = null;
+        if (is_null($chunkRenderer)) $chunkRenderer = new \nw\ChunkRenderer();
+
+        $chunkFile = $event->arguments(0);
+        $context = array_slice($event->arguments(), 1, null, false);
+
+        $dataProvider = \nw\DataProviders\Factory::get($chunkFile);
+        $dataProvider->setContext($context);
+        $dataProvider->populate();
+
+        print $chunkRenderer->render($dataProvider);
+    }
+}
