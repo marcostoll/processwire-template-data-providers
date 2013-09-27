@@ -4,7 +4,7 @@
  * Class definition of Factory
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @version 1.0.1
+ * @version 1.0.2
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
  */
@@ -89,8 +89,8 @@ class Factory {
     /**
      * Retrieves the class name of a suitable data provider
      *
-     * CamelCases the given $baseName (a template or file name) by using
-     * dashes (-) and underscores(_) as separators and adds 'DataProvider'.
+     * CamelCases the given $baseName (a template name or file name without extension) by using
+     * dashes (-) and underscores(_) as separators and adds the given $suffix.
      *
      * Examples:
      * - home               -> HomePage

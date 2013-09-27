@@ -4,7 +4,7 @@
  * Class definition of ChunkDataProvider
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @version 1.0.1
+ * @version 1.0.2
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
  */
@@ -79,8 +79,8 @@ class ChunkDataProvider extends AbstractDataProvider {
      * In the default implementation the contextual data will be store in $this->context and therefor
      * be accessible as variable $context from within the chunk.
      *
-     * You may overwrite this method to provide validation logic for context data
-     * and to store context data entries in custom keys/variables.
+     * You may overwrite this method to provide validation logic for contextual data
+     * or to store contextual data entries in custom keys/variables.
      *
      * Example of a concrete subclass:
      *

@@ -6,9 +6,10 @@
  * See README.md for usage instructions.
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @version 1.0.1
+ * @version 1.0.2
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
+ * @see https://github.com/marcostoll/processwire-template-data-providers
  * @see http://www.neuwaerts.de
  * @see http://www.processwire.com
  */
@@ -26,11 +27,6 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
     );
 
     /**
-     * @field DataProvidersFactory
-     */
-    protected $factory = null;
-
-    /**
      * @field string
      */
     protected $controllersPath = null;
@@ -38,7 +34,8 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
     /**
      * Generic constructor
      *
-     * Extracts the data providers path from the module config.
+     * Extracts the data providers path from the module config and
+     * stores it in wire('config')->paths->dataproviders.
      */
     public function __construct() {
 
@@ -62,17 +59,17 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
 
         return array(
 
-            // The module'ss title, typically a little more descriptive than the class name
+            // The module's title, typically a little more descriptive than the class name
             'title' => 'Template Data Providers',
 
             // version: major, minor, revision, i.e. 100 = 1.0.0
-            'version' => 101,
+            'version' => 102,
 
             // summary is brief description of what this module is
             'summary' => 'Define data providers for templates or chunks to prepare data or process actions',
 
             // Optional URL to more information about the module
-            'href' => 'http://www.processwire.com',
+            'href' => 'https://github.com/marcostoll/processwire-template-data-providers',
 
             // singular=true: indicates that only one instance of the module is allowed.
             // This is usually what you want for modules that attach hooks.
@@ -125,17 +122,22 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
      */
     public function init() {
 
-        // register nw autoloader
+        // register \nw autoloader
         require_once(wire('config')->paths->TemplateDataProviders . '/nw/Autoloader.php');
         spl_autoload_register(array('\nw\Autoloader', 'autoload'));
 
+        // add hooks
         $this->addHookBefore('Page::render', $this, 'beforePageRender');
-
         $this->addHook('Page::renderChunk', $this, 'renderChunk');
     }
 
     /**
      * Hook callback for Page::render
+     *
+     * This enables searching for PageDataProvider classes defined
+     * for the current page and executing their populate() methods.
+     *
+     * After that page rendering will continue as normal.
      *
      * @param HookEvent $event The hook event
      */
@@ -148,7 +150,7 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
 
         $dataProvider = \nw\DataProviders\Factory::get($page);
 
-        // return if no data provider defined for given page
+        // return if no page data provider defined for given page
         if (is_null($dataProvider)) return;
 
         $dataProvider->populate();

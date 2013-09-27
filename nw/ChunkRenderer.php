@@ -4,7 +4,7 @@
  * Class definition of ChunkRenderer
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @version 1.0.1
+ * @version 1.0.2
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
  */
@@ -26,7 +26,7 @@ class ChunkRenderer extends \Wire {
      */
     public function ___render(ChunkDataProvider $dataProvider) {
 
-        // extract additional data to the current context symbols
+        // extract additional data to the current variable scope
         extract($dataProvider->getArray());
 
         $dir = getcwd();

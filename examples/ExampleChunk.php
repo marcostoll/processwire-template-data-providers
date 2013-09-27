@@ -4,7 +4,7 @@
  * Class definition of ExampleChunk
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @version 1.0.0.1
+ * @version 1.0.2
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
  */
@@ -14,20 +14,7 @@
  */
 class ExampleChunk extends \nw\DataProviders\ChunkDataProvider {
 
-    /**
-     * Add data here
-     *
-     * <code>
-     * public function populate() {
-     *
-     *      $this->foo = 'bar';         // provides variable $foo  to use within the chunk
-     * }
-     * </code>
-     */
-    public function populate() {
 
-        $this->foo = 'bar';         // provides variable $foo  to use within the chunk
-    }
 
     /**
      * Initializes the view data with data passed from outside context
@@ -83,4 +70,19 @@ class ExampleChunk extends \nw\DataProviders\ChunkDataProvider {
 //            $this->bar = $context[1];
 //        }
 //    }
+
+    /**
+     * Add data here
+     *
+     * <code>
+     * public function populate() {
+     *
+     *      $this->foo = 'bar';         // provides variable $foo  to use within the chunk
+     * }
+     * </code>
+     */
+    public function populate() {
+
+        $this->foo = 'bar';         // provides variable $foo  to use within the chunk
+    }
 }
