@@ -22,7 +22,7 @@ class Factory {
      * Provide a \Page instance for $subject  to retrieve a suitable
      * PageDataProvider based on the page's template (if defined).
      *
-     * Provide a path to a chunk file (relative to wire('config')->paths->templates)
+     * Provide a path to a chunk file (relative to wire('config')->paths->dataproviders)
      * to retrieve a suitable ChunkDataProvider based on the chunks file name.
      *
      * @param \Page|string $subject A page or a path to a chunk file
@@ -58,7 +58,7 @@ class Factory {
 
             case is_string($subject)        :
                 // search for data provider based on filename of chunk
-                $className = self::getDataProviderClass(basename(basename($subject)), 'Chunk');
+                $className = self::getDataProviderClass(basename($subject, '.' . wire('config')->templateExtension), 'Chunk');
 
                 $classFile = wire('config')->paths->dataproviders . DIRECTORY_SEPARATOR . $className . '.php';
 
