@@ -31,21 +31,8 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
      */
     protected $controllersPath = null;
 
-    /**
-     * Generic constructor
-     *
-     * Extracts the data providers path from the module config and
-     * stores it in wire('config')->paths->dataproviders.
-     */
-    public function __construct() {
-
-        $relativePath = $this->get('data_providers_path');
-        if (empty($relativePath)) $relativePath = self::$defaults['data_providers_path'];
-
-        // add data providers path to wire config
-        wire('config')->paths->dataproviders = realpath(wire('config')->paths->templates .
-                                                        DIRECTORY_SEPARATOR . $relativePath);
-    }
+    
+    public function __construct() {}
 
     /**
      * Retrieve module meta data
@@ -110,6 +97,13 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
         return $fields;
     }
 
+/**
+     * Generic constructor
+     *
+     * Extracts the data providers path from the module config and
+     * stores it in wire('config')->paths->dataproviders.
+     */
+
     /**
      * Initialize the module
      *
@@ -121,7 +115,16 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
      * @see http://processwire.com/apigen/class-Module.html
      */
     public function init() {
+        
+        // Extracts the data providers path from the module config and
+        // stores it in wire('config')->paths->dataproviders.
+        $relativePath = $this->get('data_providers_path');
+        if (empty($relativePath)) $relativePath = self::$defaults['data_providers_path'];
 
+        // add data providers path to wire config
+        wire('config')->paths->dataproviders = realpath(wire('config')->paths->templates .
+                                                        DIRECTORY_SEPARATOR . $relativePath);
+        
         // register \nw autoloader
         require_once(wire('config')->paths->TemplateDataProviders . '/nw/Autoloader.php');
         spl_autoload_register(array('\nw\Autoloader', 'autoload'));
