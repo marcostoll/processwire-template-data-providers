@@ -6,7 +6,7 @@ As additional feature a new method `Page::renderChunk()` is provided for all Pag
 
 ## Installing the module ##
 
-Just copy the module files into you `site/modules/` folder or downoload it via the ModuleManager.  
+Just copy the module files into you `site/modules/` folder or download it via the ModuleManager.  
 Your directory structure should look like this:  
 
 site/  
@@ -26,17 +26,17 @@ The **Template Data Providers** module requires only one setting: the path to th
 As a default `dataproviders` is defined. But you may overwrite that with any path you want.  
 This path must be given relative to ProcessWire's template path (`site/templates/` per default).
 
-**Attention**: Be sure to create the data providers class path on your server. The module will not do that for you. Access writes for reading files from this directory must be granted to the php process as usual.
+**Attention**: Be sure to create the data providers class path on your server. The module will not do that for you. Access writes for reading files from this directory must be granted to the PHP process as usual.
 
 ## Defining a page data provider  ##
 
 First of all: Defining data providers for pages is optional. You may ignore this completely and code your templates as usual whether you have installed this module or not.
 
-Page data providers are ment to load and prepare data for your templates so you won't have to do this within your templates. As a result of that page data providers have to be defined for a template, not a page.
+Page data providers are meant to load and prepare data for your templates so you won't have to do this within your templates. As a result of that page data providers have to be defined for a template, not a page.
 
 Another example to put a page data provider to good use is form handling. With a page data provider you could process your form data and provide form status information to your template separated from the markup.
 
-Let's assume we have a page using the **home** template und you like to display some data not directly provided as page fields. Then you could to this:
+Let's assume we have a page using the **home** template and you like to display some data not directly provided as page fields. Then you could to this:
 
 Create a **HomePage.php** file and save it to you data providers class path (e.g. `site/templates/dataproviders/`).  
 Insert the following code:  
@@ -50,7 +50,7 @@ Insert the following code:
         } 
     } 
 
-Of course you have access to the global wire() function and therefore the full ProcessWire api at hand.
+Of course you have access to the global wire() function and therefore the full ProcessWire API at hand.
 
 **Attention**: Be sure to extend from `\nw\dataProviders\PageDataProvider` if you want to create a data provider for a specific template.
 
@@ -69,11 +69,11 @@ The file name must be named after the class name (case sensitive) and using a .p
 
 Chunks (a.k.a partials, includes, blocks, etc.) are parts of a template, that are stored in separate files mainly to reuse the code throughout multiple templates. Think of a header, footer or sidebar section that should be used website wide.
 
-In default ProcessWire context you literally include (or require) the php file containing the code for the chunk which than will be executed. Within the chunk file you have access to the same scope of variables as outside the chunk.
+In default ProcessWire context you literally include (or require) the PHP file containing the code for the chunk which than will be executed. Within the chunk file you have access to the same scope of variables as outside the chunk.
 
 And this can cause multiple problems:  
 1. Variable scopes are not separated. So creating, modifying and/or unsetting a variable within a chunk will also affect the outer template scope.  
-2. Data can only be pased to the chunk's variable scope by storing it in the template's global variable scope.
+2. Data can only be passed to the chunk's variable scope by storing it in the template's global variable scope.
 
 By installing the Template Data Providers module you have access to a new page method `Page::renderChunk($chunkFile)` that handles chunk rendering yor you.
 
@@ -98,7 +98,7 @@ So for our header chunk we create a **HeaderChunk.php** file and save it to you 
         } 
     } 
 
-Of course you have access to the global wire() function and therefore the full ProcessWire api at hand.
+Of course you have access to the global wire() function and therefore the full ProcessWire API at hand.
 
 **Attention**: Be sure to extend from `\nw\dataProviders\ChunkDataProvider` if you want to create a data provider for a specific chunk.
 
