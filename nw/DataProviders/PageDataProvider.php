@@ -76,7 +76,16 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __set($key, $value) {
 
+        // get original fuel
+        $fuel = self::getAllFuel();
+        // save reference for each fuel item
+        $savedFuel = array();
+        foreach ($fuel as $fuelKey => $fuelValue) $savedFuel[$fuelKey] = $fuelValue;
+        // set the actual value
         $this->wire($key, $value);
+        // apply the fuel again to prevent overwrite
+        // by data provider of reserved fuel items
+        foreach($savedFuel as $key => $value) $this->wire($key, $value);
     }
 
     /**
