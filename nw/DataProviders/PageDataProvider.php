@@ -63,7 +63,7 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __get($key) {
 
-        return isset($this->page->output->$key) ? $this->page->output->$key : null;
+        return isset($this->wire()->$key) ? $this->wire()->$key : null;
     }
 
     /**
@@ -76,7 +76,16 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __set($key, $value) {
 
-        $this->page->output->$key = $value;
+        // get original fuel
+        $fuel = self::getAllFuel();
+        // save reference for each fuel item
+        $savedFuel = array();
+        foreach ($fuel as $fuelKey => $fuelValue) $savedFuel[$fuelKey] = $fuelValue;
+        // set the actual value
+        $this->wire($key, $value);
+        // apply the fuel again to prevent overwrite
+        // by data provider of reserved fuel items
+        foreach($savedFuel as $key => $value) $this->wire($key, $value);
     }
 
     /**
@@ -89,7 +98,7 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __isset($key) {
 
-        return isset($this->page->output->$key);
+        return isset($this->wire()->$key);
     }
 
     /**
@@ -101,6 +110,6 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __unset($key) {
 
-        unset($this->page->output->$key);
+        unset($this->wire()->$key);
     }
 }
