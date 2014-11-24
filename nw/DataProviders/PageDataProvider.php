@@ -22,6 +22,11 @@ class PageDataProvider extends AbstractDataProvider {
     protected $page = null;
 
     /**
+     * @field array $systemFuelItems reserved fuel keys are stored here to avoid overwriting them later on
+     */
+    protected $systemFuelItems = array();
+
+    /**
      * Generic constructor
      *
      * @param \Page $page
@@ -29,6 +34,10 @@ class PageDataProvider extends AbstractDataProvider {
     public function __construct(\Page $page) {
 
         $this->setPage($page);
+
+        // save system fuel settings 
+        foreach (self::getAllFuel() as $key => $value) $this->systemFuelItems[$key] = $value;
+        
     }
 
     /**
@@ -48,7 +57,6 @@ class PageDataProvider extends AbstractDataProvider {
      * @return PageDataProvider $this (fluent interface)
      */
     public function setPage(\Page $page) {
-
         $this->page = $page;
         return $this;
     }
@@ -63,7 +71,7 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __get($key) {
 
-        return isset($this->wire()->$key) ? $this->wire()->$key : null;
+        return !is_null($this->wire()->$key) ? $this->wire()->$key : null;
     }
 
     /**
@@ -76,16 +84,9 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __set($key, $value) {
 
-        // get original fuel
-        $fuel = self::getAllFuel();
-        // save reference for each fuel item
-        $savedFuel = array();
-        foreach ($fuel as $fuelKey => $fuelValue) $savedFuel[$fuelKey] = $fuelValue;
-        // set the actual value
-        $this->wire($key, $value);
-        // apply the fuel again to prevent overwrite
-        // by data provider of reserved fuel items
-        foreach($savedFuel as $key => $value) $this->wire($key, $value);
+        // set the actual value, skip reserved fuel settings like page, input [...]
+        if(!in_array($key, $this->systemFuelItems)) $this->wire($key, $value);
+        
     }
 
     /**
@@ -98,7 +99,7 @@ class PageDataProvider extends AbstractDataProvider {
      */
     public function __isset($key) {
 
-        return isset($this->wire()->$key);
+        return !is_null($this->wire()->$key);
     }
 
     /**
