@@ -181,6 +181,7 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
         $context = array_slice($event->arguments(), 1, null, false);
 
         $dataProvider = \nw\DataProviders\Factory::get($chunkFile);
+        $dataProvider->page = $event->object;
         $dataProvider->setContext($context);
         $dataProvider->populate();
 
