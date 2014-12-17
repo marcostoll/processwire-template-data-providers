@@ -50,7 +50,7 @@ class TemplateDataProviders extends WireData implements Module, ConfigurableModu
             'title' => 'Template Data Providers',
 
             // version: major, minor, revision, i.e. 100 = 1.0.0
-            'version' => 102,
+            'version' => 103,
 
             // summary is brief description of what this module is
             'summary' => 'Define data providers for templates or chunks to prepare data or process actions',
