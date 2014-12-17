@@ -80,7 +80,9 @@ By installing the Template Data Providers module you have access to a new page m
 Example: 
 In our home template we want to include a header chunk. We now could use this code  
 
-    $page->renderChunk('path/to/header.php'); // relative to wire('config')->paths->templates
+    $page->renderChunk('path/to/header.php'); // relative to wire('config')->paths->templates 
+
+***Hint: The file extension is optional. If no extension is given $config->templateExtension (defaults to .php) is used.***
 
 Now that's not much different to the classic way of including chunks. But now the **Template Data Providers** module looks for a `HeaderChunk` data provider and invokes it's `populate()` method to provide data for the header chunk that only lives within the chunk's scope.
 
