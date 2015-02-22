@@ -60,7 +60,7 @@ Class names for page data providers follow this convention: `{CamelCaseTemplateN
 Just use the camelcase notation of your template's name and add 'Page'. Dashes and underscores are used as separators for camelcasing.  
 Some Examples:  
 - home            -> class: HomePage | file: HomePage.php  
-- search_results  -> class: SearchResultPage | file: SearchResultPage.php  
+- search_results  -> class: SearchResultsPage | file: SearchResultsPage.php  
 - list-news       -> class: ListNewsPage | file: ListNewsPage.php  
 
 The file name must be named after the class name (case sensitive) and using a .php file extension.
